@@ -143,7 +143,7 @@ YoloDetector::Run(const cv::Mat& img)
 	inputs.push_back(Ort::Value::CreateTensor<float>(
 		memory_info, tensor.ptr<float>(), tensor.total(),
 		m_inputShape.data(), m_inputShape.size()
-		));
+	));
 
 	// inference
 	const auto input_name = m_inputName.c_str();

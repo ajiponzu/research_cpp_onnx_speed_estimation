@@ -2,6 +2,7 @@
 #include "Detector.h"
 
 static std::vector<std::string> g_class_names{};
+static cv::Mat g_road_mask_gray;
 
 static std::vector<std::string> load_names(const std::string& path)
 {
@@ -26,7 +27,8 @@ CarDetector::CarDetector(const std::wstring& model_path, const cv::Size& proc_im
 {
 	m_ptrDetector.reset(new YoloDetector(model_path, proc_imgsz, 0.2f, 0.2f));
 	g_class_names = load_names("resources/dnns/classes/coco.names");
-	
+	cv::cvtColor(ResourceProvider::GetRoadMask(), g_road_mask_gray, cv::COLOR_BGR2GRAY);
+
 	/* DNNモデルは初期実行が遅いため，一度動かしておく */
 	const auto black_img = cv::Mat::zeros(proc_imgsz, CV_8UC3);
 	m_ptrDetector->Run(black_img);
@@ -38,23 +40,42 @@ void CarDetector::Run(const cv::Mat& img)
 	if (m_detectArea == cv::Rect())
 		return;
 
+	m_detectArea = m_detectAreaUpdated;
+
 	auto detections = m_ptrDetector->Run(img(m_detectArea));
 
-	m_detectedCars.clear();
-	cv::Mat road_mask;
-	cv::cvtColor(ResourceProvider::GetRoadMask(), road_mask, cv::COLOR_BGR2GRAY);
-
+	const auto itr_cars_begin = m_detectedCars.begin();
+	const auto itr_cars_end = m_detectedCars.end();
 	for (auto& detection : detections)
 	{
 		auto& box = detection.box;
 		box.x += m_detectArea.x;
 		box.y += m_detectArea.y;
 
-		const auto box_center = Func::Img::calc_rect_center(box);
-		if (!Func::Img::is_on_mask(road_mask, box_center))
+		if (box.area() > 3600)
 			continue;
 
-		m_detectedCars.push_back(DetectedCar(detection));
+		const auto box_center = Func::Img::calc_rect_center(box);
+		if (!Func::Img::is_on_mask(g_road_mask_gray, box_center))
+			continue;
+
+		auto itr = itr_cars_begin;
+		for (; itr != itr_cars_end; itr++)
+		{
+			if (itr->TryTracking(detection))
+				break;
+		}
+
+		if (itr == itr_cars_end)
+			m_detectedCars.push_back(DetectedCar(detection));
+	}
+
+	for (auto itr = m_detectedCars.begin(); itr != m_detectedCars.end();)
+	{
+		if (itr->IsUntracked())
+			m_detectedCars.erase(itr);
+		else
+			itr++;
 	}
 }
 
@@ -74,12 +95,24 @@ void CarDetector::ThisRenderer::DrawDetections(cv::Mat& img)
 	if (detected_cars.empty())
 		return;
 
+	auto ortho = ResourceProvider::GetOrthoTif().clone();
+	const auto& ortho_road_mask = ResourceProvider::GetOrthoRoadMask();
+	cv::addWeighted(ortho, 0.85, ortho_road_mask, 0.15, 1.0, ortho);
+
+	uint64_t car_id = 0;
 	for (const auto& detected_car : detected_cars)
+	{
 		detected_car.DrawOnImage(img, g_class_names);
+		detected_car.DrawOnOrtho(ortho);
+		std::cout << std::format("car_{}: {:.1f} [km/h]", car_id, detected_car.GetSpeed()) << std::endl;
+		car_id++;
+	}
+	cv::resize(ortho, ortho, cv::Size(), 0.5, 0.5);
+	cv::imshow("ortho", ortho);
 }
 
 void CarDetector::SetRect(const cv::Rect& rect)
 {
-	m_detectArea = rect;
+	m_detectArea = m_detectAreaUpdated = rect;
 	m_detectedCars.clear();
 }

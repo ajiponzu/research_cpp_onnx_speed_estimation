@@ -10,15 +10,14 @@ constexpr auto g_proc_imgsz = 320;
 
 int main()
 {
+	GuiHandler::Initialize();
+	ResourceProvider::Init(g_road_num, g_video_code, g_ortho_code);
 	CarDetector carDetector(std::format(L"resources/dnns/yolov5x-{}.onnx", g_proc_imgsz),
-	//CarDetector carDetector(std::format(L"resources/dnns/yolov3-tiny-{}.onnx", g_proc_imgsz),
+		//CarDetector carDetector(std::format(L"resources/dnns/yolov3-tiny-{}.onnx", g_proc_imgsz),
 		cv::Size(g_proc_imgsz, g_proc_imgsz));
 
-	GuiHandler::Initialize();
 	GuiHandler::SetVideoResource(std::format("resources/{}/input.mp4", g_video_code));
 	GuiHandler::SetRenderer(carDetector.CreateRenderer());
-
-	ResourceProvider::Init(g_road_num, g_video_code, g_ortho_code);
 
 	while (GuiHandler::EventPoll())
 	{

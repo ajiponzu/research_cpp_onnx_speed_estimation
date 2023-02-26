@@ -17,7 +17,6 @@ protected:
 		Run(const cv::Mat& img) = 0;
 };
 
-
 class DnnDetector : public Detector
 {
 protected:
@@ -57,4 +56,3 @@ private:
 	float m_confThr;
 	float m_iouThr;
 };
-
