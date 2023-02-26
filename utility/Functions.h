@@ -24,6 +24,8 @@ namespace Func
 		cv::Mat get_img_slice(const cv::Mat& src, const cv::Rect& area, const int& channels = 3);
 
 		cv::Point calc_rect_center(const cv::Rect& rect);
+
+		bool is_on_mask(const cv::Mat& gray_mask, const cv::Point& pt);
 	};
 
 	namespace GeoCvt

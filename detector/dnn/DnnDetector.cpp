@@ -1,24 +1,5 @@
 #include "../Detector.h"
 
-std::vector<std::string> load_names(const std::string& path)
-{
-	// load class names
-	std::vector<std::string> class_names;
-	std::ifstream infile(path);
-	if (infile.is_open())
-	{
-		std::string line;
-		while (getline(infile, line))
-			class_names.emplace_back(line);
-
-		infile.close();
-	}
-	else
-		std::cerr << "Error loading the class names!" << std::endl;
-
-	return class_names;
-}
-
 DnnDetector::DnnDetector(const std::wstring& model_path, const cv::Size& proc_imgsz) : m_imgsz(proc_imgsz)
 {
 	m_env = Ort::Env(ORT_LOGGING_LEVEL_WARNING, "ONNX_DETECTION");

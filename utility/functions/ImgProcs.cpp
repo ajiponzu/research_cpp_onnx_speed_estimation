@@ -252,3 +252,10 @@ cv::Point Func::Img::calc_rect_center(const cv::Rect& rect)
 
 	return cv::Point(cx, cy);
 }
+
+bool Func::Img::is_on_mask(const cv::Mat& gray_mask, const cv::Point& pt)
+{
+	const auto pix = gray_mask.at<uint8_t>(pt);
+
+	return pix > 0;
+}

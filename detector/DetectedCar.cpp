@@ -1,6 +1,9 @@
 #include "../CarDetector.h"
 
 static constexpr auto g_kilo_ratio = 0.001f;
+static constexpr auto g_font_face = cv::FONT_HERSHEY_DUPLEX;
+static constexpr auto g_font_scale = 1.0;
+static constexpr auto g_thickness = 1;
 
 static double calc_distance(const cv::Point2f& old_point, const cv::Point2f& new_point, const double& magni)
 {
@@ -72,4 +75,21 @@ static double calc_delta(const cv::Point2f& old_point, const cv::Point2f& new_po
 	}
 
 	return 0.0;
+}
+
+void CarDetector::DetectedCar::DrawOnImage(cv::Mat& img, const std::vector<std::string>& class_names) const
+{
+	const auto class_str = std::format("{} {:2f}", class_names[m_carType], m_detectedScore);
+
+	int base_line = 0;
+	const auto font_size = cv::getTextSize(class_str, g_font_face, g_font_scale, g_thickness, &base_line);
+
+	cv::rectangle(img, m_shape, cv::Scalar(0, 0, 255), 2);
+	cv::rectangle(img,
+		cv::Point(m_shape.tl().x, m_shape.tl().y - font_size.height - 5),
+		cv::Point(m_shape.tl().x + font_size.width, m_shape.tl().y),
+		cv::Scalar(0, 0, 255), -1);
+	cv::putText(img, class_str, 
+		cv::Point(m_shape.tl().x, m_shape.tl().y - 5),
+		g_font_face, g_font_scale, cv::Scalar(255, 255, 255), g_thickness);
 }
