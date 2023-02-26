@@ -28,13 +28,13 @@ static cv::Point2f get_trans_point(const cv::Mat& trans, const cv::Point2f& poin
 	return dst_corners[0];
 }
 
-double CarDetector::SpeedIndicator::CalcSpeed(const double& sum_delta, const uint64_t& time, const double& fps)
+static double calc_speed(const double& sum_delta, const uint64_t& time, const double& fps)
 {
 	auto speed_per_second = (sum_delta / time) * fps;
 	return speed_per_second * 3600;
 }
 
-double CarDetector::SpeedIndicator::CalcDelta(const cv::Point2f& old_point, const cv::Point2f& new_point, const double& magni)
+static double calc_delta(const cv::Point2f& old_point, const cv::Point2f& new_point, const double& magni)
 {
 	const auto& color_mask_list = ResourceProvider::GetRoadColorMaskList();
 	auto& json_hash_list = ResourceProvider::GetJsonHashList();

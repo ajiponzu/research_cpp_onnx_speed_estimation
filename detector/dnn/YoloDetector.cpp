@@ -1,6 +1,6 @@
 #include "../Detector.h"
 
-static void ReshapeImageToTensor(const cv::Mat& src, cv::Mat& dst)
+static void reshape_image_to_tensor(const cv::Mat& src, cv::Mat& dst)
 {
 	cv::cvtColor(src, dst, cv::COLOR_BGR2RGB);  // BGR -> RGB
 	src.convertTo(dst, CV_32FC3, 1.0f / 255.0f);  // normalization 1/255
@@ -10,7 +10,7 @@ static void ReshapeImageToTensor(const cv::Mat& src, cv::Mat& dst)
 }
 
 static std::unordered_set<int> g_class_set;
-static void GetBestClassInfo(std::vector<float>::iterator& itr, const int& num_classes,
+static void get_best_class_info(std::vector<float>::iterator& itr, const int& num_classes,
 	float& best_conf, int& best_class_id)
 {
 	// first 5 element are box and obj confidence
@@ -40,7 +40,7 @@ static float clip(const float& n, const float& lower, const float& upper)
 	return std::max(lower, std::min(n, upper));
 }
 
-static void ScaleCoordinates(std::vector<DetectionResult>& detections, float pad_w, float pad_h,
+static void scale_coordinates(std::vector<DetectionResult>& detections, float pad_w, float pad_h,
 	float scale, const cv::Size& img_shape)
 {
 	for (auto& detection : detections)
@@ -59,7 +59,7 @@ static void ScaleCoordinates(std::vector<DetectionResult>& detections, float pad
 	}
 }
 
-static std::vector<DetectionResult> PostProcessing(const std::vector<Ort::Value>& outputs,
+static std::vector<DetectionResult> post_processing(const std::vector<Ort::Value>& outputs,
 	float pad_w, float pad_h, float scale, const cv::Size& img_shape,
 	float conf_thres, float iou_thres)
 {
@@ -95,7 +95,7 @@ static std::vector<DetectionResult> PostProcessing(const std::vector<Ort::Value>
 
 			float obj_conf;
 			int class_id;
-			GetBestClassInfo(itr, num_classes, obj_conf, class_id);
+			get_best_class_info(itr, num_classes, obj_conf, class_id);
 
 			float confidence = cls_conf * obj_conf;
 
@@ -118,7 +118,7 @@ static std::vector<DetectionResult> PostProcessing(const std::vector<Ort::Value>
 		result.class_idx = class_ids[idx];
 		results.emplace_back(result);
 	}
-	ScaleCoordinates(results, pad_w, pad_h, scale, img_shape);
+	scale_coordinates(results, pad_w, pad_h, scale, img_shape);
 
 	return results;
 }
@@ -134,7 +134,7 @@ YoloDetector::Run(const cv::Mat& img)
 	const float scale = pad_info[2];
 
 	cv::Mat tensor{};
-	ReshapeImageToTensor(input_img, tensor);
+	reshape_image_to_tensor(input_img, tensor);
 
 	Ort::MemoryInfo memory_info = Ort::MemoryInfo::CreateCpu(
 		OrtAllocatorType::OrtArenaAllocator, OrtMemType::OrtMemTypeDefault);
@@ -153,7 +153,7 @@ YoloDetector::Run(const cv::Mat& img)
 	/*** Post-process ***/
 	// result: n * 7
 	// batch index(0), top-left x/y (1,2), bottom-right x/y (3,4), score(5), class id(6)
-	auto result = PostProcessing(outputs, pad_w, pad_h, scale, img.size(), m_confThr, m_iouThr);
+	auto result = post_processing(outputs, pad_w, pad_h, scale, img.size(), m_confThr, m_iouThr);
 
 	return result;
 }

@@ -1,6 +1,6 @@
 #include "../Detector.h"
 
-std::vector<std::string> LoadNames(const std::string& path)
+std::vector<std::string> load_names(const std::string& path)
 {
 	// load class names
 	std::vector<std::string> class_names;

@@ -5,11 +5,11 @@
 class CarDetector
 {
 private:
-	class SpeedIndicator
+	class DetectedCar
 	{
 	public:
-		static double CalcSpeed(const double& sum_delta, const uint64_t& time, const double& fps);
-		static double CalcDelta(const cv::Point2f& old_point, const cv::Point2f& new_point, const double& magni);
+		//static double CalcSpeed(const double& sum_delta, const uint64_t& time, const double& fps);
+		//static double CalcDelta(const cv::Point2f& old_point, const cv::Point2f& new_point, const double& magni);
 	};
 
 	class ThisRenderer : public Renderer
@@ -27,10 +27,7 @@ private:
 	bool m_resetDetect = false;
 	uint64_t m_trackingCount = 0;
 
-	cv::Point2f m_startPoint;
 	cv::Rect m_detectArea;
-	cv::Point2f m_curPoint;
-
 	std::unique_ptr<Detector> m_ptrDetector;
 	std::vector<std::string> m_classNames;
 	std::vector<DetectionResult> m_detections;

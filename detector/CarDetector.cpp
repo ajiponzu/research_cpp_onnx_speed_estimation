@@ -43,9 +43,6 @@ void CarDetector::ThisRenderer::DrawDetections(cv::Mat& img)
 	if (detections.empty())
 		return;
 
-	cv::circle(img, m_ptrDetector->m_startPoint, 3, cv::Scalar(0, 255, 0), -1);
-	cv::circle(img, m_ptrDetector->m_curPoint, 3, cv::Scalar(0, 0, 255), -1);
-
 	for (const auto& detection : detections)
 	{
 		cv::Mat road_mask;
@@ -65,5 +62,4 @@ void CarDetector::SetRect(const cv::Rect& rect)
 	m_detectArea = rect;
 	m_resetDetect = true;
 	m_trackingCount = 0;
-	m_startPoint = m_curPoint = cv::Point2f();
 }

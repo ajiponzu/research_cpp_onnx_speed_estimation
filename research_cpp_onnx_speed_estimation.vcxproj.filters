@@ -32,7 +32,7 @@
     <ClCompile Include="detector\CarDetector.cpp">
       <Filter>detector</Filter>
     </ClCompile>
-    <ClCompile Include="detector\SpeedIndicator.cpp">
+    <ClCompile Include="detector\DetectedCar.cpp">
       <Filter>detector</Filter>
     </ClCompile>
     <ClCompile Include="detector\dnn\DnnDetector.cpp">

@@ -17,7 +17,7 @@ protected:
 		Run(const cv::Mat& img) = 0;
 };
 
-static std::vector<std::string> LoadNames(const std::string& path);
+static std::vector<std::string> load_names(const std::string& path);
 
 class DnnDetector : public Detector
 {
