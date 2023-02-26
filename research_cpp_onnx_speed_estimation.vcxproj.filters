@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="CarDetector.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="Utility.h" />
+    <ClInclude Include="utility\Functions.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="detector\Detector.h">
+      <Filter>detector</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="utility\GuiHandler.cpp">
+      <Filter>utility</Filter>
+    </ClCompile>
+    <ClCompile Include="utility\ResourceProvider.cpp">
+      <Filter>utility</Filter>
+    </ClCompile>
+    <ClCompile Include="utility\functions\GeoConverter.cpp">
+      <Filter>utility\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="utility\functions\ImgProcs.cpp">
+      <Filter>utility\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="utility\functions\Json.cpp">
+      <Filter>utility\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="detector\CarDetector.cpp">
+      <Filter>detector</Filter>
+    </ClCompile>
+    <ClCompile Include="detector\SpeedIndicator.cpp">
+      <Filter>detector</Filter>
+    </ClCompile>
+    <ClCompile Include="detector\dnn\DnnDetector.cpp">
+      <Filter>detector\dnn</Filter>
+    </ClCompile>
+    <ClCompile Include="detector\dnn\YoloDetector.cpp">
+      <Filter>detector\dnn</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="detector">
+      <UniqueIdentifier>{cbbf30f7-2f0b-4f52-8d99-40744840e742}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="utility">
+      <UniqueIdentifier>{c59e0218-4aa2-4506-b079-9afddaefbd88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="utility\functions">
+      <UniqueIdentifier>{36bfa037-ab24-4917-a2fd-3b3e4523fb43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="detector\dnn">
+      <UniqueIdentifier>{2e4ce13d-58dc-4ecc-8aff-6541243fab9c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\runtimes\win-x64\native\onnxruntime.dll" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\runtimes\win-x64\native\onnxruntime_providers_shared.dll" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\runtimes\win-x64\native\onnxruntime_providers_cuda.dll" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\runtimes\win-x64\native\onnxruntime_providers_tensorrt.dll" />
+  </ItemGroup>
+</Project>
